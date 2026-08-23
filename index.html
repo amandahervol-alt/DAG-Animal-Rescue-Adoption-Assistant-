@@ -3,89 +3,151 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Adoption Assistant — Deming Animal Guardians</title>
+  <title>Deming Animal Guardians (DAG) — Adoption Assistant & Rescue Portal</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --orange:    #e07b39;
-      --orange-lt: #fff7f0;
-      --teal:      #2a7d6e;
-      --teal-lt:   #f0faf8;
-      --gray-50:   #f9fafb;
-      --gray-100:  #f3f4f6;
-      --gray-200:  #e5e7eb;
-      --gray-400:  #9ca3af;
-      --gray-600:  #4b5563;
-      --gray-800:  #1f2937;
-      --radius:    10px;
+      --orange:      #e07b39;
+      --orange-dark: #c56223;
+      --orange-lt:   #fff7f0;
+      --teal:        #2a7d6e;
+      --teal-dark:   #1f6557;
+      --teal-lt:     #f0faf8;
+      --gray-50:     #f9fafb;
+      --gray-100:    #f3f4f6;
+      --gray-200:    #e5e7eb;
+      --gray-400:    #9ca3af;
+      --gray-600:    #4b5563;
+      --gray-800:    #1f2937;
+      --radius:      12px;
+      --shadow-sm:   0 2px 8px rgba(0,0,0,0.06);
+      --shadow-md:   0 4px 16px rgba(0,0,0,0.1);
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif;
       background: var(--gray-50);
       color: var(--gray-800);
-      height: 100dvh;
+      min-height: 100dvh;
       display: flex;
       flex-direction: column;
     }
 
     /* ── Header ── */
     header {
-      background: var(--teal);
+      background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%);
       color: #fff;
-      padding: 14px 24px;
+      padding: 16px 24px;
       display: flex;
       align-items: center;
-      gap: 14px;
-      flex-shrink: 0;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      box-shadow: var(--shadow-md);
+      z-index: 10;
     }
-    .header-paw { font-size: 28px; }
-    .header-text h1 { font-size: 18px; font-weight: 700; line-height: 1.2; }
-    .header-text p  { font-size: 12px; opacity: 0.85; margin-top: 2px; }
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .header-paw { font-size: 32px; }
+    .header-text h1 { font-size: 20px; font-weight: 700; line-height: 1.2; }
+    .header-text p  { font-size: 13px; opacity: 0.9; margin-top: 2px; }
 
-    /* ── API key setup screen ── */
-    #setup-screen {
+    .header-badge {
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.3);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    /* ── Navigation Tabs ── */
+    nav.tab-bar {
+      background: #fff;
+      border-bottom: 1px solid var(--gray-200);
+      display: flex;
+      overflow-x: auto;
+      padding: 0 16px;
+      gap: 8px;
+    }
+    .tab-btn {
+      padding: 14px 18px;
+      background: transparent;
+      border: none;
+      border-bottom: 3px solid transparent;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--gray-600);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .tab-btn:hover { color: var(--teal); }
+    .tab-btn.active {
+      color: var(--teal);
+      border-bottom-color: var(--teal);
+    }
+
+    /* ── Main Layout ── */
+    main {
       flex: 1;
       display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
+      flex-direction: column;
+      max-width: 1000px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 20px 16px;
     }
-    .setup-card {
+
+    .tab-content {
+      display: none;
+      flex-direction: column;
+      flex: 1;
+    }
+    .tab-content.active {
+      display: flex;
+    }
+
+    /* ── Tab 1: AI Chat ── */
+    .chat-container {
       background: #fff;
       border: 1px solid var(--gray-200);
       border-radius: var(--radius);
-      padding: 36px 32px;
-      max-width: 440px;
-      width: 100%;
-      text-align: center;
-    }
-    .setup-card .paw-big { font-size: 48px; margin-bottom: 12px; }
-    .setup-card h2 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
-    .setup-card p  { font-size: 14px; color: var(--gray-600); margin-bottom: 24px; line-height: 1.6; }
-    .setup-card input {
-      width: 100%;
-      padding: 10px 14px;
-      border: 1px solid var(--gray-200);
-      border-radius: 6px;
-      font-size: 14px;
-      margin-bottom: 12px;
-      font-family: monospace;
-    }
-    .setup-card input:focus { outline: none; border-color: var(--teal); box-shadow: 0 0 0 3px rgba(42,125,110,0.12); }
-    .setup-card .hint { font-size: 12px; color: var(--gray-400); margin-bottom: 16px; }
-
-    /* ── Chat screen ── */
-    #chat-screen {
-      flex: 1;
-      display: none;
+      box-shadow: var(--shadow-sm);
+      display: flex;
       flex-direction: column;
-      min-height: 0;
+      height: calc(100dvh - 190px);
+      min-height: 480px;
+      overflow: hidden;
     }
 
-    /* ── Messages ── */
+    .chat-banner {
+      background: var(--teal-lt);
+      border-bottom: 1px solid #cce8e2;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--teal-dark);
+    }
+    .chat-banner .mode-pill {
+      font-weight: 700;
+      background: #fff;
+      padding: 2px 8px;
+      border-radius: 12px;
+      border: 1px solid #b2ddd4;
+      font-size: 12px;
+    }
+
     #messages {
       flex: 1;
       overflow-y: auto;
@@ -94,7 +156,6 @@
       flex-direction: column;
       gap: 14px;
     }
-
     .msg {
       display: flex;
       gap: 10px;
@@ -105,13 +166,13 @@
     .msg.bot   { align-self: flex-start; }
 
     .avatar {
-      width: 34px;
-      height: 34px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 16px;
+      font-size: 18px;
       flex-shrink: 0;
       margin-top: 2px;
     }
@@ -119,14 +180,14 @@
     .msg.user .avatar { background: var(--orange); color: #fff; }
 
     .bubble {
-      padding: 11px 15px;
+      padding: 12px 16px;
       border-radius: 14px;
       font-size: 14px;
-      line-height: 1.65;
+      line-height: 1.6;
       max-width: calc(100% - 48px);
     }
     .msg.bot  .bubble {
-      background: #fff;
+      background: #f8fafc;
       border: 1px solid var(--gray-200);
       border-top-left-radius: 4px;
     }
@@ -136,11 +197,8 @@
       border-top-right-radius: 4px;
     }
 
-    /* Markdown-ish rendering */
-    .bubble strong { font-weight: 700; }
-    .bubble em     { font-style: italic; }
     .bubble ul, .bubble ol { padding-left: 18px; margin: 6px 0; }
-    .bubble li { margin-bottom: 3px; }
+    .bubble li { margin-bottom: 4px; }
     .bubble p  { margin-bottom: 6px; }
     .bubble p:last-child { margin-bottom: 0; }
 
@@ -164,9 +222,9 @@
       40%           { transform: translateY(-6px); }
     }
 
-    /* ── Suggestions ── */
+    /* Suggestions */
     #suggestions {
-      padding: 0 16px 10px;
+      padding: 0 16px 12px;
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
@@ -184,7 +242,7 @@
     }
     .suggestion:hover { background: #fde8d4; }
 
-    /* ── Input bar ── */
+    /* Input Bar */
     .input-bar {
       padding: 12px 16px;
       background: #fff;
@@ -192,11 +250,10 @@
       display: flex;
       gap: 10px;
       align-items: flex-end;
-      flex-shrink: 0;
     }
     #user-input {
       flex: 1;
-      padding: 10px 14px;
+      padding: 10px 16px;
       border: 1px solid var(--gray-200);
       border-radius: 22px;
       font-size: 14px;
@@ -204,12 +261,14 @@
       resize: none;
       max-height: 120px;
       line-height: 1.5;
-      overflow-y: auto;
+      outline: none;
     }
-    #user-input:focus { outline: none; border-color: var(--teal); box-shadow: 0 0 0 3px rgba(42,125,110,0.12); }
-
+    #user-input:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(42,125,110,0.12);
+    }
     #send-btn {
-      width: 40px; height: 40px;
+      width: 42px; height: 42px;
       border-radius: 50%;
       border: none;
       background: var(--teal);
@@ -219,166 +278,514 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-shrink: 0;
       transition: background 0.15s;
     }
-    #send-btn:hover:not(:disabled) { background: #1f6557; }
-    #send-btn:disabled { background: var(--gray-200); cursor: not-allowed; }
+    #send-btn:hover { background: var(--teal-dark); }
 
-    /* ── Shared button ── */
-    .btn {
-      padding: 10px 22px;
-      border-radius: 6px;
-      border: none;
+    /* ── Tab 2: Pet Compatibility Quiz ── */
+    .quiz-card {
+      background: #fff;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      padding: 30px;
+      box-shadow: var(--shadow-sm);
+    }
+    .quiz-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--teal-dark);
+      margin-bottom: 8px;
+    }
+    .quiz-subtitle {
+      font-size: 14px;
+      color: var(--gray-600);
+      margin-bottom: 24px;
+    }
+    .question-block {
+      margin-bottom: 24px;
+    }
+    .question-label {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--gray-800);
+      margin-bottom: 12px;
+      display: block;
+    }
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+    }
+    .option-btn {
+      padding: 14px;
+      background: #fff;
+      border: 2px solid var(--gray-200);
+      border-radius: 10px;
       font-size: 14px;
       font-weight: 600;
+      color: var(--gray-800);
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s;
+    }
+    .option-btn:hover { border-color: var(--teal); background: var(--teal-lt); }
+    .option-btn.selected {
+      border-color: var(--teal);
+      background: var(--teal-lt);
+      color: var(--teal-dark);
+    }
+
+    .btn-calc {
+      background: var(--orange);
+      color: #fff;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 700;
       cursor: pointer;
       transition: background 0.15s;
+      width: 100%;
+      margin-top: 10px;
     }
-    .btn-teal { background: var(--teal); color: #fff; }
-    .btn-teal:hover { background: #1f6557; }
+    .btn-calc:hover { background: var(--orange-dark); }
 
-    /* ── Error toast ── */
-    #error-toast {
+    /* Result Card */
+    #quiz-result {
+      display: none;
+      margin-top: 24px;
+      padding: 24px;
+      background: var(--orange-lt);
+      border: 2px solid #f2c7a3;
+      border-radius: var(--radius);
+    }
+    .result-badge {
+      display: inline-block;
+      background: var(--orange);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 12px;
+      margin-bottom: 8px;
+    }
+    .result-name {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--gray-800);
+      margin-bottom: 8px;
+    }
+    .result-desc {
+      font-size: 14px;
+      color: var(--gray-600);
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+
+    /* ── Tab 3 & 4: Info Cards & Grid ── */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .info-card {
+      background: #fff;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+    .info-card h3 {
+      font-size: 18px;
+      color: var(--teal-dark);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .info-card p {
+      font-size: 14px;
+      color: var(--gray-600);
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+    .fee-badge {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--orange);
+      margin: 10px 0;
+    }
+    .checklist {
+      list-style: none;
+      padding: 0;
+      margin: 12px 0;
+    }
+    .checklist li {
+      font-size: 13px;
+      color: var(--gray-800);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .checklist li::before {
+      content: "✓";
+      color: var(--teal);
+      font-weight: 800;
+    }
+
+    /* API Modal */
+    #api-modal {
       display: none;
       position: fixed;
-      bottom: 80px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #fee2e2;
-      color: #dc2626;
-      padding: 10px 18px;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 500;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
       z-index: 99;
-      max-width: 90%;
-      text-align: center;
+    }
+    #api-modal.active { display: flex; }
+    .modal-box {
+      background: #fff;
+      padding: 30px;
+      border-radius: var(--radius);
+      max-width: 460px;
+      width: 100%;
+    }
+    .modal-box input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--gray-200);
+      border-radius: 6px;
+      font-size: 14px;
+      margin: 14px 0;
+      font-family: monospace;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+    .btn-secondary {
+      background: var(--gray-100);
+      color: var(--gray-800);
+      border: 1px solid var(--gray-200);
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: var(--teal);
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
     }
 
-    @media (max-width: 500px) {
+    /* Toast */
+    #toast {
+      display: none;
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1f2937;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 20px;
+      font-size: 13px;
+      z-index: 100;
+    }
+
+    @media (max-width: 600px) {
       header { padding: 12px 16px; }
-      .setup-card { padding: 28px 20px; }
+      nav.tab-bar { padding: 0 8px; }
+      .tab-btn { padding: 12px 10px; font-size: 13px; }
+      .chat-container { height: calc(100dvh - 170px); }
     }
   </style>
 </head>
 <body>
 
 <header>
-  <div class="header-paw">🐾</div>
-  <div class="header-text">
-    <h1>Deming Animal Guardians</h1>
-    <p>Adoption Assistant — Find your perfect companion</p>
+  <div class="brand-wrap">
+    <div class="header-paw">🐾</div>
+    <div class="header-text">
+      <h1>Deming Animal Guardians</h1>
+      <p>Adoption Assistant & Rescue Portal — Luna County, NM</p>
+    </div>
   </div>
+  <div class="header-badge">Non-Profit 501(c)(3) Rescue</div>
 </header>
 
-<!-- Setup screen (API key entry) -->
-<div id="setup-screen">
-  <div class="setup-card">
-    <div class="paw-big">🐶</div>
-    <h2>Meet Your Adoption Assistant</h2>
-    <p>I'm here to help you find the right pet, answer questions about the adoption process, and connect you with Deming Animal Guardians. Enter your Anthropic API key to get started.</p>
-    <input type="password" id="api-key-input" placeholder="sk-ant-..." autocomplete="off" />
-    <p class="hint">Your key is stored only in this browser session and never sent anywhere except the Anthropic API.</p>
-    <button class="btn btn-teal" onclick="startChat()">Start Chatting</button>
+<nav class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('chat')">💬 AI Adoption Assistant</button>
+  <button class="tab-btn" onclick="switchTab('matcher')">🐶 Pet Compatibility Matcher</button>
+  <button class="tab-btn" onclick="switchTab('fees')">📋 Adoption Process & Fees</button>
+  <button class="tab-btn" onclick="switchTab('foster')">🏡 Foster & Volunteer Hub</button>
+</nav>
+
+<main>
+  <!-- ── Tab 1: AI Chat ── -->
+  <section id="tab-chat" class="tab-content active">
+    <div class="chat-container">
+      <div class="chat-banner">
+        <span>🐾 <strong>DAG Adoption Assistant</strong></span>
+        <div>
+          <span id="mode-display" class="mode-pill">Instant Demo Mode</span>
+          <button onclick="openApiModal()" style="margin-left:8px; background:none; border:none; color:var(--teal); text-decoration:underline; font-size:12px; cursor:pointer;">(Settings)</button>
+        </div>
+      </div>
+
+      <div id="messages">
+        <div class="msg bot">
+          <div class="avatar">🐾</div>
+          <div class="bubble">
+            <p>Hi there! 🐶 I'm the adoption assistant for <strong>Deming Animal Guardians (DAG)</strong> in Deming, New Mexico.</p>
+            <p>I can help answer questions about our adoption fees, out-of-state adoption, veterinary care included with each pet, fostering, or how to get involved. How can I help you today?</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="suggestions">
+        <button class="suggestion" onclick="sendSuggestion(this)">What are the adoption fees?</button>
+        <button class="suggestion" onclick="sendSuggestion(this)">How does adoption work?</button>
+        <button class="suggestion" onclick="sendSuggestion(this)">Do you adopt to out-of-state homes?</button>
+        <button class="suggestion" onclick="sendSuggestion(this)">What medical care is included?</button>
+        <button class="suggestion" onclick="sendSuggestion(this)">How can I foster an animal?</button>
+      </div>
+
+      <div class="input-bar">
+        <textarea id="user-input" rows="1" placeholder="Ask about fees, adoption steps, or fostering…"></textarea>
+        <button id="send-btn" onclick="sendMessage()" title="Send">&#10148;</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Tab 2: Pet Compatibility Matcher Quiz ── -->
+  <section id="tab-matcher" class="tab-content">
+    <div class="quiz-card">
+      <div class="quiz-title">🐶 Pet Compatibility Matcher</div>
+      <div class="quiz-subtitle">Answer 4 quick questions to find your ideal companion match for life in Southern New Mexico and beyond!</div>
+
+      <div class="question-block">
+        <span class="question-label">1. What type of home environment do you have?</span>
+        <div class="options-grid" data-group="home">
+          <button class="option-btn selected" onclick="selectOption(this, 'home', 'apartment')">🏢 Apartment / Condo (No Yard)</button>
+          <button class="option-btn" onclick="selectOption(this, 'home', 'yard')">🏡 House with Fenced Yard</button>
+          <button class="option-btn" onclick="selectOption(this, 'home', 'acreage')">🌾 Rural Acreage / Farm</button>
+        </div>
+      </div>
+
+      <div class="question-block">
+        <span class="question-label">2. What is your household activity level?</span>
+        <div class="options-grid" data-group="activity">
+          <button class="option-btn" onclick="selectOption(this, 'activity', 'hiking')">🥾 High Energy (Hiking / Running Buddy)</button>
+          <button class="option-btn selected" onclick="selectOption(this, 'activity', 'moderate')">🚶 Moderate (Daily neighborhood walks)</button>
+          <button class="option-btn" onclick="selectOption(this, 'activity', 'calm')">🛋️ Calm & Relaxed (Couch cuddler)</button>
+        </div>
+      </div>
+
+      <div class="question-block">
+        <span class="question-label">3. Who lives in your household?</span>
+        <div class="options-grid" data-group="household">
+          <button class="option-btn selected" onclick="selectOption(this, 'household', 'adults')">🧑 Adults / Work from Home</button>
+          <button class="option-btn" onclick="selectOption(this, 'household', 'kids')">👶 Family with Young Children</button>
+          <button class="option-btn" onclick="selectOption(this, 'household', 'seniors')">👵 Seniors / Quiet Household</button>
+        </div>
+      </div>
+
+      <div class="question-block">
+        <span class="question-label">4. Do you currently have other pets?</span>
+        <div class="options-grid" data-group="pets">
+          <button class="option-btn selected" onclick="selectOption(this, 'pets', 'dogs')">🐕 Existing Dog(s)</button>
+          <button class="option-btn" onclick="selectOption(this, 'pets', 'cats')">🐈 Existing Cat(s)</button>
+          <button class="option-btn" onclick="selectOption(this, 'pets', 'none')">✨ No Other Pets</button>
+        </div>
+      </div>
+
+      <button class="btn-calc" onclick="calculateMatch()">Find My Pet Compatibility Match 🐾</button>
+
+      <div id="quiz-result">
+        <span id="result-badge" class="result-badge">Perfect Match Profile</span>
+        <div id="result-name" class="result-name">Gentle Family Companion</div>
+        <div id="result-desc" class="result-desc">Based on your answers, here is our recommendation...</div>
+        <button class="btn-primary" onclick="askChatAboutMatch()">Ask Adoption Assistant About This Match 💬</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Tab 3: Adoption Process & Fees ── -->
+  <section id="tab-fees" class="tab-content">
+    <div class="info-grid">
+      <div class="info-card">
+        <h3>🐕 Dog & Puppy Adoption</h3>
+        <div class="fee-badge">$100 – $200</div>
+        <p>Helps cover comprehensive veterinary preparation before your new dog comes home.</p>
+        <ul class="checklist">
+          <li>Spay or Neuter Surgery</li>
+          <li>Core Vaccinations (Rabies, DHPP)</li>
+          <li>Microchip Registration</li>
+          <li>Heartworm Testing & Preventative</li>
+          <li>Flea & Tick Treatment</li>
+        </ul>
+      </div>
+
+      <div class="info-card">
+        <h3>🐈 Cat & Kitten Adoption</h3>
+        <div class="fee-badge">$50 – $100</div>
+        <p>Ensures every feline is healthy, vaccinated, and ready for indoor life.</p>
+        <ul class="checklist">
+          <li>Spay or Neuter Surgery</li>
+          <li>FVRCP Core Vaccinations</li>
+          <li>Microchip Registration</li>
+          <li>FeLV / FIV Testing</li>
+          <li>Deworming & Health Exam</li>
+        </ul>
+      </div>
+
+      <div class="info-card">
+        <h3>🚐 Out-of-State Adoptions</h3>
+        <p><strong>Yes, DAG adopts out-of-state!</strong></p>
+        <p>We work with compassionate adopters across the US. We conduct virtual meet-and-greets and help coordinate ground or flight transport arrangements for approved homes.</p>
+        <ul class="checklist">
+          <li>Virtual Home & Yard Check</li>
+          <li>Veterinary Reference Check</li>
+          <li>Direct Transport Coordination</li>
+        </ul>
+      </div>
+
+      <div class="info-card">
+        <h3>📝 4-Step Adoption Roadmap</h3>
+        <ol style="padding-left:18px; line-height:1.8; font-size:14px; color:var(--gray-600);">
+          <li><strong>Submit Application</strong> online or at an adoption event.</li>
+          <li><strong>Volunteer Review</strong> within 24–48 hours.</li>
+          <li><strong>Meet & Greet</strong> with the animal and your family.</li>
+          <li><strong>Adoption Contract & Welcome Home!</strong></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Tab 4: Foster & Volunteer Hub ── -->
+  <section id="tab-foster" class="tab-content">
+    <div class="info-grid">
+      <div class="info-card">
+        <h3>🏡 Fostering Saves Lives</h3>
+        <p>Fostering gives shelter animals a quiet, loving space to decompress while waiting for their forever homes. DAG is a foster-based rescue and relies on community homes.</p>
+        <p style="background:var(--teal-lt); padding:10px; border-radius:6px; border:1px solid #c8e8e1; font-weight:600; color:var(--teal-dark);">
+          🩺 <strong>100% Medical Coverage:</strong> DAG covers all veterinary care, medications, and spay/neuter surgery for foster animals!
+        </p>
+      </div>
+
+      <div class="info-card">
+        <h3>🤝 Volunteer Opportunities</h3>
+        <p>Join our volunteer family in Luna County! We have flexible opportunities for every skill set:</p>
+        <ul class="checklist">
+          <li>Transport Drivers (Vet visits & adoption relays)</li>
+          <li>Adoption Event Coordinators</li>
+          <li>Social Media & Photography Helpers</li>
+          <li>Foster Caregivers (Dogs, Cats, Puppies, Kittens)</li>
+        </ul>
+      </div>
+
+      <div class="info-card">
+        <h3>📍 Contact & Live Listings</h3>
+        <p><strong>Deming Animal Guardians (DAG)</strong><br>Deming, New Mexico (Luna County)</p>
+        <p>🐾 <strong>Live Available Animals:</strong> Checked daily on the official Facebook page (Search <em>"Deming Animal Guardians"</em>).</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- API Modal -->
+<div id="api-modal">
+  <div class="modal-box">
+    <h3 style="color:var(--teal-dark); margin-bottom:8px;">⚙️ AI Assistant Settings</h3>
+    <p style="font-size:13px; color:var(--gray-600);">Connect your Anthropic API key to enable live Claude 3.7 / 3.5 reasoning, or use the built-in Instant Demo Mode (no key required).</p>
+    <input type="password" id="api-key-input" placeholder="sk-ant-api03-..." />
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="useDemoMode()">Use Instant Demo Mode</button>
+      <button class="btn-primary" onclick="saveApiKey()">Save Live Key</button>
+    </div>
   </div>
 </div>
 
-<!-- Chat screen -->
-<div id="chat-screen">
-  <div id="messages"></div>
-  <div id="suggestions">
-    <button class="suggestion" onclick="sendSuggestion(this)">What animals are available?</button>
-    <button class="suggestion" onclick="sendSuggestion(this)">How does adoption work?</button>
-    <button class="suggestion" onclick="sendSuggestion(this)">What are the adoption fees?</button>
-    <button class="suggestion" onclick="sendSuggestion(this)">Do you have dogs good with kids?</button>
-    <button class="suggestion" onclick="sendSuggestion(this)">How can I volunteer or foster?</button>
-  </div>
-  <div class="input-bar">
-    <textarea id="user-input" rows="1" placeholder="Ask me anything about adoption…"></textarea>
-    <button id="send-btn" onclick="sendMessage()" title="Send">&#10148;</button>
-  </div>
-</div>
-
-<div id="error-toast"></div>
+<div id="toast"></div>
 
 <script>
-  const SYSTEM_PROMPT = `You are the friendly adoption assistant for Deming Animal Guardians (DAG), an animal rescue organization based in Deming, New Mexico. Your job is to help potential adopters find the right pet, answer questions about the adoption process, and encourage people to adopt, foster, or support the rescue.
+  let apiKey = localStorage.getItem('ANTHROPIC_API_KEY') || '';
+  let chatHistory = [];
+  let currentQuizProfile = '';
 
-About Deming Animal Guardians:
-- A nonprofit, volunteer-run animal rescue in Deming, NM (Luna County)
-- Rescues dogs, cats, and sometimes other animals from the local shelter and surrounding area
-- Animals are housed in foster homes and at the rescue facility
-- All animals are spayed/neutered, vaccinated, microchipped, and heartworm tested before adoption
-- Focused on finding loving forever homes for animals that might otherwise be euthanized
+  const SYSTEM_PROMPT = `You are the friendly adoption assistant for Deming Animal Guardians (DAG), a non-profit 501(c)(3) animal rescue based in Deming, New Mexico (Luna County).
+About DAG:
+- Volunteer-run non-profit saving dogs and cats from euthanasia in rural New Mexico.
+- Animals are housed in foster homes and provided full veterinary care (spay/neuter, vaccinations, microchip, heartworm testing).
+- Adoption Fees: Dogs $100–$200, Cats $50–$100.
+- Out-of-State Adoptions: Welcomed! DAG coordinates with approved out-of-state adopters.
+- Fostering: DAG covers 100% of medical and veterinary expenses for foster pets.
+- Strict Anti-Hallucination Guardrail: Never make up specific live shelter animals. Direct users to the official Deming Animal Guardians Facebook page for real-time listings.`;
 
-Adoption process:
-- Fill out an adoption application (available on the DAG website or in person)
-- Applications are reviewed by DAG volunteers
-- A meet-and-greet is arranged between the potential adopter and the animal
-- If it's a good match, an adoption contract is signed and an adoption fee is collected
-- Adoption fees vary by animal: dogs typically $100–$200, cats typically $50–$100 (fees help cover spay/neuter, vaccines, microchip)
-- DAG does adopt to out-of-state homes for the right match
-
-How to help:
-- Adopt: Give an animal a forever home
-- Foster: Temporarily house an animal until they're adopted (DAG covers medical costs)
-- Donate: Financial donations help cover vet bills and daily care
-- Volunteer: Help with events, transport, socialization, admin
-- Share: Spread the word on social media to help animals find homes
-
-Tone guidelines:
-- Warm, friendly, and encouraging — you love animals and love connecting them with people
-- Honest and helpful — if you don't know a specific detail (like current available animals), say so and direct them to contact DAG directly or check their Facebook page
-- Never make up specific animals currently available — you don't have real-time shelter data
-- Keep responses concise and conversational
-- Use occasional animal-related warmth but don't be over-the-top
-- Always end with an invitation to take the next step (apply, visit, contact, etc.)
-
-Contact / Find DAG:
-- Website: deminganimalgauardians.org (note: users should search online for the most current URL)
-- Facebook: Search "Deming Animal Guardians" on Facebook — this is where current available animals are posted
-- Location: Deming, New Mexico
-- To see available animals: Direct people to their Facebook page or website as that's where current listings are updated`;
-
-  let apiKey = '';
-  let messages = [];
-  let isLoading = false;
-
-  // ── Setup ─────────────────────────────────────────────────────────────────
-
-  document.getElementById('api-key-input').addEventListener('keydown', e => {
-    if (e.key === 'Enter') startChat();
+  document.addEventListener('DOMContentLoaded', () => {
+    updateModeDisplay();
   });
 
-  function startChat() {
-    const key = document.getElementById('api-key-input').value.trim();
-    if (!key || !key.startsWith('sk-')) {
-      showError('Please enter a valid Anthropic API key (starts with "sk-").');
-      return;
-    }
-    apiKey = key;
-    document.getElementById('setup-screen').style.display = 'none';
-    document.getElementById('chat-screen').style.display = 'flex';
-    document.getElementById('chat-screen').style.flexDirection = 'column';
+  function switchTab(tabId) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
 
-    addBotMessage(`Hi there! 🐾 I'm the adoption assistant for **Deming Animal Guardians**, a rescue in Deming, New Mexico.\n\nI can help you learn about our adoption process, what to expect, how to foster, and how to get involved. What brings you here today?`);
+    const activeBtn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.getAttribute('onclick').includes(tabId));
+    if (activeBtn) activeBtn.classList.add('active');
+
+    const activeContent = document.getElementById(`tab-${tabId}`);
+    if (activeContent) activeContent.classList.add('active');
   }
 
-  // ── Messaging ─────────────────────────────────────────────────────────────
+  function openApiModal() {
+    document.getElementById('api-key-input').value = apiKey;
+    document.getElementById('api-modal').classList.add('active');
+  }
 
-  document.getElementById('user-input').addEventListener('keydown', e => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
+  function closeApiModal() {
+    document.getElementById('api-modal').classList.remove('active');
+  }
+
+  function saveApiKey() {
+    const val = document.getElementById('api-key-input').value.trim();
+    if (val) {
+      apiKey = val;
+      localStorage.setItem('ANTHROPIC_API_KEY', val);
+      showToast('Live Anthropic Claude API Key Saved!');
     }
-  });
+    closeApiModal();
+    updateModeDisplay();
+  }
 
-  // Auto-resize textarea
-  document.getElementById('user-input').addEventListener('input', function () {
-    this.style.height = 'auto';
-    this.style.height = Math.min(this.scrollHeight, 120) + 'px';
-  });
+  function useDemoMode() {
+    apiKey = '';
+    localStorage.removeItem('ANTHROPIC_API_KEY');
+    showToast('Switched to Zero-Config Demo Mode');
+    closeApiModal();
+    updateModeDisplay();
+  }
+
+  function updateModeDisplay() {
+    const el = document.getElementById('mode-display');
+    if (apiKey) {
+      el.textContent = 'Live Claude AI Mode';
+      el.style.background = '#d1fae5';
+      el.style.color = '#065f46';
+    } else {
+      el.textContent = 'Instant Demo Mode';
+      el.style.background = '#fff';
+      el.style.color = 'var(--teal-dark)';
+    }
+  }
 
   function sendSuggestion(btn) {
     document.getElementById('user-input').value = btn.textContent;
@@ -386,84 +793,104 @@ Contact / Find DAG:
   }
 
   async function sendMessage() {
-    if (isLoading) return;
     const input = document.getElementById('user-input');
     const text = input.value.trim();
     if (!text) return;
 
     input.value = '';
-    input.style.height = 'auto';
-
-    // Hide suggestions after first send
-    document.getElementById('suggestions').style.display = 'none';
-
     addUserMessage(text);
-    messages.push({ role: 'user', content: text });
+    chatHistory.push({ role: 'user', content: text });
 
-    setLoading(true);
     const typingId = addTypingIndicator();
 
-    try {
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': apiKey,
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true',
-        },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-5',
-          max_tokens: 1024,
-          system: SYSTEM_PROMPT,
-          messages: messages,
-        }),
-      });
-
-      removeTypingIndicator(typingId);
-
-      if (!response.ok) {
-        const err = await response.json().catch(() => ({}));
-        throw new Error(err.error?.message || `API error ${response.status}`);
+    if (apiKey) {
+      try {
+        const reply = await callClaudeAPI(text);
+        removeTypingIndicator(typingId);
+        addBotMessage(reply);
+        chatHistory.push({ role: 'assistant', content: reply });
+        return;
+      } catch (err) {
+        console.warn('Live API call failed, falling back to smart demo matcher:', err);
       }
-
-      const data = await response.json();
-      const reply = data.content[0].text;
-      messages.push({ role: 'assistant', content: reply });
-      addBotMessage(reply);
-
-    } catch (e) {
-      removeTypingIndicator(typingId);
-      showError(e.message);
-    } finally {
-      setLoading(false);
     }
+
+    // Offline Intelligent Knowledge Matcher
+    setTimeout(() => {
+      removeTypingIndicator(typingId);
+      const reply = generateSmartOfflineResponse(text);
+      addBotMessage(reply);
+      chatHistory.push({ role: 'assistant', content: reply });
+    }, 450);
   }
 
-  // ── UI helpers ─────────────────────────────────────────────────────────────
+  async function callClaudeAPI(userText) {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-3-7-sonnet-20250219',
+        max_tokens: 1024,
+        system: SYSTEM_PROMPT,
+        messages: chatHistory
+      })
+    });
+    if (!res.ok) throw new Error(`API Error ${res.status}`);
+    const data = await res.json();
+    return data.content[0].text;
+  }
+
+  function generateSmartOfflineResponse(query) {
+    const q = query.toLowerCase();
+
+    if (q.includes('fee') || q.includes('cost') || q.includes('price')) {
+      return "🐾 **Adoption Fees at Deming Animal Guardians:**\n- **Dogs & Puppies**: $100 to $200\n- **Cats & Kittens**: $50 to $100\n\nEvery adoption fee includes **spay/neuter surgery, core vaccinations, microchipping, and heartworm/FeLV testing**! These fees help cover our veterinary expenses so we can rescue more animals.";
+    }
+
+    if (q.includes('out-of-state') || q.includes('out of state') || q.includes('travel') || q.includes('transport')) {
+      return "🚐 **Yes! DAG happily adopts to out-of-state homes!**\nWe work with approved adopters across the country. We conduct virtual meet-and-greets and help coordinate ground transport or flight volunteers to safely unite you with your new companion.";
+    }
+
+    if (q.includes('foster') || q.includes('volunteer')) {
+      return "🏡 **Fostering Saves Lives!**\nBecause DAG is a foster-based rescue, foster homes are our lifeblood. **DAG covers 100% of veterinary medical expenses** for foster animals. All you provide is food, shelter, and love! We also have volunteer opportunities for drivers, event helpers, and social media.";
+    }
+
+    if (q.includes('how does') || q.includes('process') || q.includes('apply') || q.includes('steps')) {
+      return "📋 **The 4-Step Adoption Process:**\n1. **Application**: Fill out an adoption questionnaire on our website or Facebook.\n2. **Review**: DAG volunteers review your application within 24–48 hours.\n3. **Meet & Greet**: Meet the animal in person or virtually.\n4. **Adoption**: Sign contract, pay fee, and welcome your new family member!";
+    }
+
+    if (q.includes('medical') || q.includes('spay') || q.includes('vaccin') || q.includes('vet')) {
+      return "🩺 **Veterinary Care Guarantee:**\nEvery animal adopted through DAG is **spayed/neutered, fully vaccinated, microchipped, dewormed, and tested for heartworm (dogs) or FeLV/FIV (cats)** before adoption.";
+    }
+
+    if (q.includes('available') || q.includes('dog') || q.includes('cat') || q.includes('kid')) {
+      return "🐶 **Finding Available Animals:**\nOur available dogs and cats are updated daily on the official **Deming Animal Guardians Facebook page**! You can also try our **Pet Compatibility Matcher** tab above to find the right companion energy level for your household.";
+    }
+
+    return "That's a wonderful question! Deming Animal Guardians is an all-volunteer rescue in Luna County, NM dedicated to saving dogs and cats. Feel free to ask about our adoption fees, out-of-state transport, foster programs, or veterinary care!";
+  }
 
   function addUserMessage(text) {
     const container = document.getElementById('messages');
     const div = document.createElement('div');
     div.className = 'msg user';
-    div.innerHTML = `
-      <div class="avatar">😊</div>
-      <div class="bubble">${escHtml(text)}</div>
-    `;
+    div.innerHTML = `<div class="avatar">😊</div><div class="bubble"><p>${escapeHtml(text)}</p></div>`;
     container.appendChild(div);
-    scrollToBottom();
+    container.scrollTop = container.scrollHeight;
   }
 
   function addBotMessage(text) {
     const container = document.getElementById('messages');
     const div = document.createElement('div');
     div.className = 'msg bot';
-    div.innerHTML = `
-      <div class="avatar">🐾</div>
-      <div class="bubble">${renderMarkdown(text)}</div>
-    `;
+    div.innerHTML = `<div class="avatar">🐾</div><div class="bubble">${formatMarkdown(text)}</div>`;
     container.appendChild(div);
-    scrollToBottom();
+    container.scrollTop = container.scrollHeight;
   }
 
   function addTypingIndicator() {
@@ -472,14 +899,9 @@ Contact / Find DAG:
     const div = document.createElement('div');
     div.className = 'msg bot typing';
     div.id = id;
-    div.innerHTML = `
-      <div class="avatar">🐾</div>
-      <div class="bubble">
-        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
-      </div>
-    `;
+    div.innerHTML = `<div class="avatar">🐾</div><div class="bubble"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;
     container.appendChild(div);
-    scrollToBottom();
+    container.scrollTop = container.scrollHeight;
     return id;
   }
 
@@ -488,49 +910,76 @@ Contact / Find DAG:
     if (el) el.remove();
   }
 
-  function setLoading(val) {
-    isLoading = val;
-    document.getElementById('send-btn').disabled = val;
-    document.getElementById('user-input').disabled = val;
+  function formatMarkdown(text) {
+    let html = escapeHtml(text);
+    html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    html = html.replace(/^- (.*)$/gm, '<li>$1</li>');
+    html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+    return html.split('\n\n').map(p => p.startsWith('<ul>') ? p : `<p>${p.replace(/\n/g, '<br>')}</p>`).join('');
   }
 
-  function scrollToBottom() {
-    const el = document.getElementById('messages');
-    el.scrollTop = el.scrollHeight;
+  function escapeHtml(str) {
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
-  function showError(msg) {
-    const toast = document.getElementById('error-toast');
-    toast.textContent = msg;
-    toast.style.display = 'block';
-    setTimeout(() => { toast.style.display = 'none'; }, 5000);
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.display = 'block';
+    setTimeout(() => { t.style.display = 'none'; }, 3500);
   }
 
-  // Simple markdown renderer (bold, italic, bullets, line breaks)
-  function renderMarkdown(text) {
-    let html = escHtml(text);
-    // Bold
-    html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-    // Italic
-    html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
-    // Unordered lists
-    html = html.replace(/^- (.+)$/gm, '<li>$1</li>');
-    html = html.replace(/(<li>.*<\/li>\n?)+/g, m => `<ul>${m}</ul>`);
-    // Paragraphs (double newline)
-    html = html.split(/\n\n+/).map(p => {
-      if (p.startsWith('<ul>') || p.startsWith('<ol>')) return p;
-      return `<p>${p.replace(/\n/g, '<br>')}</p>`;
-    }).join('');
-    return html;
+  /* ── Pet Compatibility Quiz Logic ── */
+  const quizState = { home: 'apartment', activity: 'moderate', household: 'adults', pets: 'dogs' };
+
+  function selectOption(btn, group, val) {
+    btn.parentElement.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    quizState[group] = val;
   }
 
-  function escHtml(str) {
-    return str
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
+  function calculateMatch() {
+    const resBox = document.getElementById('quiz-result');
+    const title = document.getElementById('result-name');
+    const desc = document.getElementById('result-desc');
+
+    let profileName = 'Gentle Family Companion';
+    let profileDesc = '';
+
+    if (quizState.activity === 'hiking' || quizState.home === 'acreage') {
+      profileName = 'Desert Trail Explorer (Active Hound / Shepherd Mix)';
+      profileDesc = 'You are an ideal match for one of DAG\'s high-energy rescue dogs! These loyal companions thrive on trail hikes, outdoor adventures in the Florida Mountains, and active backyard play.';
+    } else if (quizState.activity === 'calm' || quizState.household === 'seniors') {
+      profileName = 'Calm Couch Sweetheart (Senior Companion or Lap Cat)';
+      profileDesc = 'You are the perfect match for a gentle senior dog or sanctuary cat. These pets are already house-trained, peaceful, and love quiet companionship and cozy naps.';
+    } else if (quizState.household === 'kids') {
+      profileName = 'Patient & Friendly Family Dog / Socialized Kitten';
+      profileDesc = 'Your home is well-suited for a gentle, thoroughly foster-tested family pet who enjoys playful interaction and has a patient, social demeanor.';
+    } else {
+      profileName = 'Balanced Companion Dog / Indoor Feline';
+      profileDesc = 'Your moderate lifestyle is a great fit for a wide variety of DAG foster pets who enjoy a morning stroll followed by a calm afternoon by your side.';
+    }
+
+    currentQuizProfile = profileName;
+    title.textContent = profileName;
+    desc.textContent = profileDesc;
+    resBox.style.display = 'block';
+    resBox.scrollIntoView({ behavior: 'smooth' });
   }
+
+  function askChatAboutMatch() {
+    switchTab('chat');
+    document.getElementById('user-input').value = `I took the Compatibility Quiz and matched with "${currentQuizProfile}". What kind of dogs or cats in this category does DAG typically rescue?`;
+    sendMessage();
+  }
+
+  document.getElementById('user-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
 </script>
 
 </body>
